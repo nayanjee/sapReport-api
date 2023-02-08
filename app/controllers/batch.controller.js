@@ -185,3 +185,51 @@ let convertExcelToJson  = (fileName) => {
   //}
 };*/
 
+exports.matchBatch = async (req, res) => {
+  console.log(req.body);
+  const batches = [];
+  const match = ['E', 'I', 'P', 'F', 'B', '8', 'O', 'Q', 'D', '0', 'S', '5', '1'];
+  const repl1 = ['I', 'E', 'I', 'E', '8', 'B', 'D', 'D', 'O', 'O', '5', 'S', 'I'];
+  const repl2 = ['P', '1', 'E', 'I', 'F', 'F', 'Q', 'O', '0', 'D'];
+  const repl3 = ['F', 'F', 'F', 'P', 'P', 'P', '0', '0', 'Q', 'Q'];
+  const repl4 = ['B', 'B', 'B', 'B'];
+
+  const batch = req.body.batch.split('');
+  batch.forEach((element, index) => {
+    let val1 = '';
+    let val2 = '';
+    let val3 = '';
+    let val4 = '';
+    const key = Object.keys(match).find(k => match[k] === element);
+    
+    batch.forEach((ele, ind) => {
+      if (key && index == ind) {
+        val1 = repl1[key] ? val1 + repl1[key] : val1 + ele;
+        val2 = repl2[key] ? val2 + repl2[key] : val2 + ele;
+        val3 = repl3[key] ? val3 + repl3[key] : val3 + ele;
+        val4 = repl4[key] ? val4 + repl4[key] : val4 + ele;
+      } else {
+        val1 = val1 + ele;
+        val2 = val2 + ele;
+        val3 = val3 + ele;
+        val4 = val4 + ele;
+      }
+    });
+    batches.push(val1);
+    batches.push(val2);
+    batches.push(val3);
+    batches.push(val4);
+  });
+
+  const unique = batches.filter((v, i, a) => a.indexOf(v) === i);
+  console.log('batches - ', unique);
+
+  Batch.find({ batch: {$in: unique}}, (error, result) => {
+    if (error) return res.status(400).send({status:400, message: 'problemFindingRecord'});
+    if (!result) return res.status(200).send({status:400, message: 'noRecord'});
+
+    const uniqueResult = [...new Set(result.map(item => item.batch))];
+    //const uniqueResult = [...new Map(result.map(item => [item['batch'], item])).values()];    // results Full details
+    res.status(200).send({status:200, message:'Success', data:uniqueResult});
+  }).sort({batch: 1});
+};

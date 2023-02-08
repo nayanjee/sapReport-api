@@ -24,4 +24,5 @@ module.exports = function(app) {
   app.use(allowCrossDomain);
 
   app.post("/api/batchImport", controller.importBatch);
+  app.post("/api/matchBatch", controller.matchBatch);
 };
