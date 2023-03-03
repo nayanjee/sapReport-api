@@ -19,6 +19,5 @@ module.exports = function(app) {
   app.post("/api/ppwot", controller.getProductPriceWithoutTaxByMaterials);
 
   app.post("/api/multipliers", controller.getProductsMultiplier);
-
   app.post("/api/shelflifes", controller.getProductShelflife);
 };

@@ -3,32 +3,12 @@ const fs = require('fs');
 const multer = require('multer');
 const moment = require('moment');
 
-const uploadFile = require("../middlewares/uploadProduct");
+const uploadFile = require("../middlewares/uploadShelflife");
 
 const db = require("../models");
-const Product = db.products;
+const ProductShelflife = db.product_shelflife;
 
-
-exports.getProductByDivisionId = function(req, res) {
-  Product.find({status: 1, divSAPcode: req.params.divisionId }, (error, result) => {
-    if (error) return res.status(400).send({status:400, message: 'problemFindingRecord'});
-    if (!result) return res.status(200).send({status:400, message: 'noRecord'});
-
-    res.status(200).send({status:200, message:'Success', data:result});
-  });
-}
-
-exports.getProductByDivisions = function(req, res) {
-  console.log('getProductByDivisions--', req.body);
-  Product.find({status: 1, divSAPcode: { $in: req.body.divisions } }, (error, result) => {
-    if (error) return res.status(400).send({status:400, message: 'problemFindingRecord'});
-    if (!result) return res.status(200).send({status:400, message: 'noRecord'});
-
-    res.status(200).send({status:200, message:'Success', data:result});
-  });
-}
-
-exports.importProduct = async (req, res) => {
+exports.importProductShelflife = async (req, res) => {
   try {
     // To upload file
     await uploadFile(req, res);
@@ -48,7 +28,7 @@ exports.importProduct = async (req, res) => {
 
 let convertExcelToJson  = (fileName) => {
   return new Promise(resolve => {
-    const filePath = './public/uploads/product/' + fileName;
+    const filePath = './public/uploads/shelflife/' + fileName;
     if (!filePath) {
       resolve({status:400, message: 'FilePath is null!'});
     }
@@ -78,16 +58,17 @@ let convertExcelToJson  = (fileName) => {
       // change key name in array of objects
       const newArray = parsedData.map(item => {
         return { 
-            division: item['Division Code'],
-            name: item.Name,
-            material: item['Material Code']
+            division: item.Division,
+            material: item.Material,
+            materialDesc: item['Material Name'],
+            shelfLife: item['Shelf Life']
         };
       });
 
       (async function(){
-        const removeAll = await Product.deleteMany({});   // Remove all documents before insert.
+        const removeAll = await ProductShelflife.deleteMany({});   // Remove all documents before insert.
         
-        const insertMany = await Product.insertMany(newArray);
+        const insertMany = await ProductShelflife.insertMany(newArray);
         resolve({status:200, message: "Data added successfully."});
       })();
     } else {

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+// This table is being used as an "Exclude Stockiest".
 const StockiestSchema = new mongoose.Schema({
     plant: {
         type: String,
@@ -14,7 +15,7 @@ const StockiestSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    stateId: {
+    /* stateId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "State",
         default: null
@@ -22,6 +23,14 @@ const StockiestSchema = new mongoose.Schema({
     cityId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "City",
+        default: null
+    }, */
+    stateId: {
+        type: String,
+        default: null
+    },
+    cityId: {
+        type: String,
         default: null
     },
     status: {

@@ -6,6 +6,7 @@ const moment = require('moment');
 const uploadFile = require("../middlewares/uploadBatch");
 
 const db = require("../models");
+const { Console } = require('console');
 const Batch = db.batch;
 
 // Batch excel importing/uploading and enter records in database
@@ -18,8 +19,6 @@ exports.importBatch = async (req, res) => {
     if (req.file == undefined) {
       return res.status(200).send({status:400, message: "Please upload a file!" });
     }
-
-    //res.status(200).send({status:200, message: "Uploaded the file successfully: " + req.file.originalname});
 
     // Insert records in database
     const finalResult = await convertExcelToJson(req.file.originalname);
@@ -186,16 +185,87 @@ let convertExcelToJson  = (fileName) => {
 };*/
 
 exports.matchBatch = async (req, res) => {
-  console.log(req.body);
-  const batches = [];
-  const match = ['E', 'I', 'P', 'F', 'B', '8', 'O', 'Q', 'D', '0', 'S', '5', '1'];
-  const repl1 = ['I', 'E', 'I', 'E', '8', 'B', 'D', 'D', 'O', 'O', '5', 'S', 'I'];
-  const repl2 = ['P', '1', 'E', 'I', 'F', 'F', 'Q', 'O', '0', 'D'];
-  const repl3 = ['F', 'F', 'F', 'P', 'P', 'P', '0', '0', 'Q', 'Q'];
+  const batches = [req.body.batch];
+
+  const match = ['R', 'I', 'P', 'F', 'B', '8', 'O', 'Q', 'D', '0', 'G', '1', 'S', '5', 'L'];
+  const repl1 = ['F', '1', 'I', 'E', '8', 'B', '0', 'D', 'O', 'O', '6', 'I', '5', 'S', '1'];
+  const repl2 = ['P', 'E', 'E', 'I', 'F', 'F', 'Q', 'O', '0', 'D', '0', 'L'];
+  const repl3 = ['F', 'F', 'F', 'P', 'P', 'P', 'D', '0', 'Q', 'Q'];
   const repl4 = ['B', 'B', 'B', 'B'];
+  /* const replace = [
+    {
+      0: 'D',
+      1: '8',
+      2: 'Q'
+    },
+    {
+      0: '0',
+      1: 'F',
+      2: 'O'
+    },
+    {
+      0: 'O',
+      1: 'P',
+      2: '0'
+    }
+  ]; */
+  
 
   const batch = req.body.batch.split('');
+
+  /* batch.forEach( async (element, index) => {
+    //const index = 0;
+    const key = Object.keys(match).find(k => match[k] === element);
+    console.log('index---', index, element, key);
+    if (key) {
+      //for (let j=0; j<3; j++) {
+        const beforeMatch = req.body.batch.substr(0, index);
+        const afterMatch = req.body.batch.substr(index+1, batch.length);
+        console.log('afterMatch--', index, afterMatch);
+        for (let i=0; i<3; i++) {
+          // console.log('replace---', i, replace[i][key]);
+          const result = beforeMatch + replace[i][key] + afterMatch;
+          batches.push(result);
+        }
+        if (afterMatch) {
+
+        }
+      //}
+    }
+  }); */
+
   batch.forEach((element, index) => {
+    const key = Object.keys(match).find(k => match[k] === element);
+    if (key) {
+      if (repl1[key]) {
+        let beforeMatch = req.body.batch.substr(0, index);
+        let afterMatch = req.body.batch.substr(index+1, batch.length);
+        let result = beforeMatch + repl1[key] + afterMatch;
+        batches.push(result);
+      }
+      if (repl2[key]) {
+        let beforeMatch = req.body.batch.substr(0, index);
+        let afterMatch = req.body.batch.substr(index+1, batch.length);
+        let result = beforeMatch + repl2[key] + afterMatch;
+        batches.push(result);
+      }
+      if (repl3[key]) {
+        let beforeMatch = req.body.batch.substr(0, index);
+        let afterMatch = req.body.batch.substr(index+1, batch.length);
+        let result = beforeMatch + repl3[key] + afterMatch;
+        batches.push(result);
+      }
+      if (repl4[key]) {
+        let beforeMatch = req.body.batch.substr(0, index);
+        let afterMatch = req.body.batch.substr(index+1, batch.length);
+        let result = beforeMatch + repl4[key] + afterMatch;
+        batches.push(result);
+      }
+    }
+  });
+  //console.log('batches---', batches);
+
+  /* batch.forEach((element, index) => {
     let val1 = '';
     let val2 = '';
     let val3 = '';
@@ -219,7 +289,7 @@ exports.matchBatch = async (req, res) => {
     batches.push(val2);
     batches.push(val3);
     batches.push(val4);
-  });
+  }); */
 
   const unique = batches.filter((v, i, a) => a.indexOf(v) === i);
   console.log('batches - ', unique);
@@ -228,8 +298,62 @@ exports.matchBatch = async (req, res) => {
     if (error) return res.status(400).send({status:400, message: 'problemFindingRecord'});
     if (!result) return res.status(200).send({status:400, message: 'noRecord'});
 
-    const uniqueResult = [...new Set(result.map(item => item.batch))];
+    const uniqueResult = [...new Set(result.map(item => item.batch))];    // output batch no. only.
     //const uniqueResult = [...new Map(result.map(item => [item['batch'], item])).values()];    // results Full details
     res.status(200).send({status:200, message:'Success', data:uniqueResult});
   }).sort({batch: 1});
 };
+
+let getWords = (batch, index, match, repl1, repl2, repl3, repl4) => {
+    const batches = [];
+    const splitBatch = batch.split('');
+    for (let i=index+1; i<splitBatch.length; i++) {
+      const key = Object.keys(match).find(k => match[k] === splitBatch[i]);
+      if (key) {
+        if (repl1[key]) {
+          let beforeMatch = batch.substr(0, i);
+          let afterMatch = batch.substr(i+1, batch.length);
+          let result = beforeMatch + repl1[key] + afterMatch;
+          batches.push(result);
+
+          if (index <= batch.length) {
+            // getWords(batch, i, match, repl1, repl2, repl3, repl4);
+          }
+        }
+        if (repl2[key]) {
+          let beforeMatch = batch.substr(0, i);
+          let afterMatch = batch.substr(i+1, batch.length);
+          let result = beforeMatch + repl2[key] + afterMatch;
+          batches.push(result);
+
+          if (index <= batch.length) {
+            // getWords(batch, i, match, repl1, repl2, repl3, repl4);
+          }
+        }
+        if (repl3[key]) {
+          let beforeMatch = batch.substr(0, i);
+          let afterMatch = batch.substr(i+1, batch.length);
+          let result = beforeMatch + repl3[key] + afterMatch;
+          batches.push(result);
+
+          if (index <= batch.length) {
+            // getWords(batch, i, match, repl1, repl2, repl3, repl4);
+          }
+        }
+        if (repl4[key]) {
+          let beforeMatch = batch.substr(0, i);
+          let afterMatch = batch.substr(i+1, batch.length);
+          let result = beforeMatch + repl4[key] + afterMatch;
+          batches.push(result);
+
+          if (index <= batch.length) {
+            // getWords(batch, i, match, repl1, repl2, repl3, repl4);
+          }
+        }
+      }
+    }
+
+    if (batches) {
+      return(batches);
+    }
+}

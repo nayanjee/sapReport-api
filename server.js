@@ -2,11 +2,11 @@
     * @description      : 
     * @author           : nayan.prakash
     * @group            : 
-    * @created          : 04/06/2022 - 17:06:27
+    * @created          : 07/02/2023 - 17:06:27
     * 
     * MODIFICATION LOG
     * - Version         : 1.0.0
-    * - Date            : 04/06/2022
+    * - Date            : 07/02/2023
     * - Author          : nayan.prakash
     * - Modification    : 
 **/
@@ -66,6 +66,10 @@ require("./app/routes/stock.routes")(app);
 require("./app/routes/product.routes")(app);
 require("./app/routes/division.routes")(app);
 require("./app/routes/distributor.routes")(app);
+require("./app/routes/product_price.routes")(app);
+require("./app/routes/exclude_stockiest.routes")(app);
+require("./app/routes/product_shelflife.routes")(app);
+require("./app/routes/product_multiplier.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 7873;

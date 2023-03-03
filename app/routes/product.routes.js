@@ -12,4 +12,5 @@ module.exports = function(app) {
   app.get("/api/product/:divisionId", controller.getProductByDivisionId);
 
   app.post("/api/product/byDivision", controller.getProductByDivisions);
+  app.post("/api/productImport", controller.importProduct);
 };

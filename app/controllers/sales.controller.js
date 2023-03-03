@@ -36,7 +36,6 @@ exports.getSales = async function(req, res) {
     billToParty: { $nin: stockiest },
     monthYear: monthYearQuery,
   }
-  console.log('matchQuery---', matchQuery);
 
   Sales.aggregate([
     {
@@ -151,7 +150,6 @@ exports.getGiftSales = async function(req, res) {
       res.status(200).send({status:200, message:'Success', data:result});
     });
   }
-
 }
 
 let getGiftStockiest = () => {
@@ -209,7 +207,7 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
     const sheetNames = file.SheetNames;
 
     // Variable to store our data 
-    let parsedData = [];
+    // let parsedData = [];
 
     // Convert to json using xlsx
     const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[0]]);
@@ -283,7 +281,6 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
         resolve({status:200, message: "Data added successfully."});
       })();
     } else {
-      //return res.status(200).send({status:400, message: "There are more than 1 lakh rows in this file, more than 1 lakh rows cannot be uploaded at a time, please upload it by reducing the number of rows."});
       resolve({status:400, message: 'There are more than 1 lakh rows in this file, more than 1 lakh rows cannot be uploaded at a time, please upload it by reducing the number of rows.'});
     }
   });
@@ -339,7 +336,7 @@ let convertHoExcelToJson  = (fileName, month, year, monthYear) => {
     const sheetNames = file.SheetNames;
 
     // Variable to store our data 
-    let parsedData = [];
+    // let parsedData = [];
 
     // Convert to json using xlsx
     const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[0]]);
@@ -352,7 +349,6 @@ let convertHoExcelToJson  = (fileName, month, year, monthYear) => {
       resolve({status:400, message: 'File content is empty.'});
     }
 
-    console.log('totalRow--', totalRow);
     if (totalRow <= 100100) {
       // Find the match and remove records if exists 
       // Division HO, 00, 07 and 91 has no need in reports.
@@ -413,7 +409,6 @@ let convertHoExcelToJson  = (fileName, month, year, monthYear) => {
         resolve({status:200, message: "Data added successfully."});
       })();
     } else {
-      //return res.status(200).send({status:400, message: "There are more than 1 lakh rows in this file, more than 1 lakh rows cannot be uploaded at a time, please upload it by reducing the number of rows."});
       resolve({status:400, message: 'There are more than 1 lakh rows in this file, more than 1 lakh rows cannot be uploaded at a time, please upload it by reducing the number of rows.'});
     }
   });
@@ -454,11 +449,10 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
     const sheetNames = file.SheetNames;
 
     // Variable to store our data 
-    let parsedData = [];
+    // let parsedData = [];
 
     // Convert to json using xlsx
     const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[0]]);
-    //console.log('tempData---', tempData);
     
     const totalRow = tempData.length;
     if (totalRow == 0) {
@@ -468,7 +462,7 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
     if (tempData.length <= 100100) {
       // change key name in array of objects
       const newArray = tempData.map(item => {
-        const billDocDate = item['Bill Doc Date'] ? moment(new Date(item['Bill Doc Date'])).add(1,'days').format("YYYY-MM-DD") : '';
+        // const billDocDate = item['Bill Doc Date'] ? moment(new Date(item['Bill Doc Date'])).add(1,'days').format("YYYY-MM-DD") : '';
 
         return {
           plant:            item.Plant,

@@ -5,9 +5,9 @@ const uploadFile = require("../middlewares/uploadStocks");
 const uploadPHPFile = require("../middlewares/uploadPhpStocks");
 
 const db = require("../models");
-const Sales = db.sales;
+// const Sales = db.sales;
 const Stocks = db.stocks;
-const Product = db.products;
+// const Product = db.products;
 
 exports.getStocks = function(req, res) {
   Stocks.aggregate([
@@ -67,7 +67,6 @@ exports.importPHPStocks = async (req, res) => {
 
     const my = req.body.year+'-'+req.body.month;
     const monthYear = moment(my,'YYYY-MM').format('YYYY-MM-01');
-    console.log('monthYear---', monthYear);
 
 
     // Insert records in database
@@ -95,11 +94,10 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
     const sheetNames = file.SheetNames;
 
     // Variable to store our data 
-    let parsedData = [];
+    // let parsedData = [];
 
     // Convert to json using xlsx
     const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[0]]);
-    //console.log('tempData---', tempData);
     
     const totalRow = tempData.length;
     if (totalRow == 0) {
@@ -107,8 +105,6 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
     }
 
     if (tempData.length <= 100100) {
-      // console.log('tempData---', tempData);
-
       // change key name in array of objects
       const newArray = tempData.map(item => {
         const expireOn = item['ExpireOn'] ? moment(new Date(item['ExpireOn'])).add(1,'days').format("YYYY-MM-DD") : '';
@@ -131,7 +127,6 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
         }
       });
 
-      //console.log('newArray---', newArray);
       (async function(){
         const insertMany = await Stocks.insertMany(newArray);
         resolve({status:200, message: "Data added successfully."});
@@ -186,11 +181,10 @@ let convertHOExcelToJson  = (fileName, month, year, monthYear) => {
     const sheetNames = file.SheetNames;
 
     // Variable to store our data 
-    let parsedData = [];
+    // let parsedData = [];
 
     // Convert to json using xlsx
     const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[0]]);
-    //console.log('tempData---', tempData);
     
     const totalRow = tempData.length;
     if (totalRow == 0) {
@@ -213,14 +207,12 @@ let convertHOExcelToJson  = (fileName, month, year, monthYear) => {
       // change key name in array of objects
       const newArray = filteredData.map(item => {
         const expireOn = item['SLED/BBD'] ? moment(new Date(item['SLED/BBD'])).add(1,'days').format("YYYY-MM-DD") : '';
-        
         const UnrestrictedQty = item['Unrestricted Qty.'] != undefined ? item['Unrestricted Qty.'] : 0;
         const ValueUnrestricted = item['Value Unrestricted'] != undefined ? item['Value Unrestricted'] : 0;
         const ValueInQualInsp = item['Value in QualInsp.'] != undefined ? item['Value in QualInsp.'] : 0;
         const ValueBlockedStock = item['Value BlockedStock'] != undefined ? item['Value BlockedStock'] : 0;
         const stkQtyInspection = item['Stock in Quality Inspection'] != undefined ? item['Stock in Quality Inspection'] : 0;
         const Blocked = item.Blocked != undefined ? item.Blocked : 0;
-
         const stockQty = parseFloat(UnrestrictedQty) + parseFloat(stkQtyInspection) + parseFloat(Blocked);
         const value = parseFloat(ValueUnrestricted) + parseFloat(ValueInQualInsp) + parseFloat(ValueBlockedStock);
 
@@ -295,11 +287,10 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
     const sheetNames = file.SheetNames;
 
     // Variable to store our data 
-    let parsedData = [];
+    // let parsedData = [];
 
     // Convert to json using xlsx
     const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[0]]);
-    //console.log('tempData---', tempData);
     
     const totalRow = tempData.length;
     if (totalRow == 0) {
