@@ -455,6 +455,7 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
     const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[0]]);
     
     const totalRow = tempData.length;
+    console.log('totalRow---', totalRow);
     if (totalRow == 0) {
       resolve({status:400, message: 'File content is empty.'});
     }
@@ -498,7 +499,7 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
           monthYear:        monthYear
         }
       });
-
+      console.log(newArray);
       (async function(){
         const insertMany = await Sales.insertMany(newArray);
         resolve({status:200, message: "Data added successfully."});
