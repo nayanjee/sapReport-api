@@ -415,6 +415,7 @@ let convertHoExcelToJson  = (fileName, month, year, monthYear) => {
 }
 
 exports.importPHPSales = async (req, res) => {
+  console.log('PHP Import');
   try {
     // To upload file
     await uploadPHPFile(req, res);
@@ -433,6 +434,7 @@ exports.importPHPSales = async (req, res) => {
 }
 
 let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
+  console.log('PHP Excel');
   return new Promise(async resolve => {
     const filePath = './public/uploads/sales/php/' + fileName;
     if (!filePath) {
