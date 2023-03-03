@@ -440,6 +440,7 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
     if (!filePath) {
       resolve({status:400, message: 'FilePath is null!'});
     }
+    console.log('filePath---', filePath);
 
     // Read the file using pathname
     const file = xlsx.readFile(filePath, { type: 'binary' , cellDates: true });
@@ -449,6 +450,7 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
     
     // Grab the sheet info from the file
     const sheetNames = file.SheetNames;
+    console.log('sheetNames---', sheetNames);
 
     // Variable to store our data 
     // let parsedData = [];
