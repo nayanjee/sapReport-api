@@ -509,7 +509,8 @@ let convertPHPExcelToJson  = (fileName, month, year, monthYear) => {
         resolve({status:200, message: "Data added successfully."});
       })();
     } else {
-      return res.status(200).send({status:400, message: "There are more than 1 lakh rows in this file, more than 1 lakh rows cannot be uploaded at a time, please upload it by reducing the number of rows."});
+      resolve({status:200, message: "There are more than 1 lakh rows in this file, more than 1 lakh rows cannot be uploaded at a time, please upload it by reducing the number of rows."});
+      // return res.status(200).send({status:400, message: "There are more than 1 lakh rows in this file, more than 1 lakh rows cannot be uploaded at a time, please upload it by reducing the number of rows."});
     }
   });
 }
