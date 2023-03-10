@@ -187,7 +187,8 @@ let convertExcelToJson  = (fileName) => {
 exports.matchBatch = async (req, res) => {
   Batch.find({ batch: req.body.batch}, (error, result) => {
     if (error) return res.status(400).send({status:400, message: 'problemFindingRecord'});
-    if (result) {
+    console.log('result1--', result);
+    if (result.length) {
       const uniqueResult = [...new Set(result.map(item => item.batch))];    // output batch no. only.
       //const uniqueResult = [...new Map(result.map(item => [item['batch'], item])).values()];    // results Full details
       res.status(200).send({status:200, message:'Success', data:uniqueResult});
@@ -305,6 +306,7 @@ exports.matchBatch = async (req, res) => {
 
         const uniqueResult = [...new Set(result2.map(item => item.batch))];    // output batch no. only.
         //const uniqueResult = [...new Map(result.map(item => [item['batch'], item])).values()];    // results Full details
+        console.log('result2---', result2);
         res.status(200).send({status:200, message:'Success', data:uniqueResult});
       }).sort({batch: 1});
     }
