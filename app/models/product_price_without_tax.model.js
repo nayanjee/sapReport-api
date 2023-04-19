@@ -126,6 +126,14 @@ const ProductPriceWithoutTaxSchema = new mongoose.Schema({
         type: String,
         default: 0
     },
+    9028: {
+        type: String,
+        default: 0
+    },
+    9029: {
+        type: String,
+        default: 0
+    },
     status: {
         type: Number,
         default: 1
