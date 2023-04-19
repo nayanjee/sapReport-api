@@ -171,6 +171,8 @@ let getGiftStockiest = () => {
 
 exports.importDistSales = async (req, res) => {
   try {
+    console.log('----------------------------- IMPORT SALES -----------------------------');
+
     // To upload file
     await uploadFile(req, res);
 
@@ -179,8 +181,11 @@ exports.importDistSales = async (req, res) => {
       return res.status(200).send({status:400, message: "Please upload a file!" });
     }
 
+    console.log('----- Sales file uploaded.');
+
     const my = req.body.year+'-'+req.body.month;
     const monthYear = moment(my,'YYYY-MM').format('YYYY-MM-01');
+    console.log('----- Month: ', req.body.month, ' Year: ', req.body.year);
 
     // Insert records in database
     const finalResult = await convertDistExcelToJson(req.file.originalname, req.body.month, req.body.year, monthYear);
@@ -197,6 +202,8 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
       resolve({status:400, message: 'FilePath is null!'});
     }
 
+    console.log('----- Reading Uploaded File.');
+
     // Read the file using pathname
     const file = xlsx.readFile(filePath, { type: 'binary' , cellDates: true });
     if (!file.SheetNames) {
@@ -206,12 +213,8 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
     // Grab the sheet info from the file
     const sheetNames = file.SheetNames;
 
-    // Variable to store our data 
-    // let parsedData = [];
-
     // Convert to json using xlsx
     const tempData = xlsx.utils.sheet_to_json(file.Sheets[sheetNames[0]]);
-    //console.log('tempData---', tempData);
 
     const batches = await getBatch();
     
@@ -220,8 +223,10 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
       resolve({status:400, message: 'File content is empty.'});
     }
 
-    console.log('totalRow(Dist Sales)--', totalRow);
+    console.log('----- Total Rows in the File: ', totalRow);
     if (totalRow <= 100100) {
+      console.log('----- Removing undefined, Nan and Blank data.');
+
       // Find the match and remove records if exists 
       // Division HO, 00, 07 and 91 has no need in reports.
       const filteredData = tempData.filter(temp =>
@@ -229,6 +234,7 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
         temp.Division != NaN &&
         temp.Division != ''
       );
+      console.log('----- Removed undefined, Nan and Blank data.');
 
       // change key name in array of objects
       const newArray = filteredData.map(item => {
@@ -241,7 +247,7 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
         
         const expireOn = (temp.length<=0 || temp.length > 5) ? null : temp[0].expireOn;
 
-        return {
+        const mapData =  {
           plant:            item.Plant,
           billDocNumber:    item['Bill DocNo'],
           billDocDate:      billDocDate,
@@ -274,6 +280,9 @@ let convertDistExcelToJson  = (fileName, month, year, monthYear) => {
           year:             year,
           monthYear:        monthYear
         }
+
+        console.log('----- Data: ', mapData);
+        return mapData;
       });
 
       (async function(){
