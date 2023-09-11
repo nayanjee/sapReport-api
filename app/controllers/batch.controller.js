@@ -12,7 +12,7 @@ const Batch = db.batch;
 // Batch excel importing/uploading and enter records in database
 exports.importBatch = async (req, res) => {
   try {
-    // To upload file
+    // To upload file/s
     await uploadFile(req, res);
 
     // Functionality after upload
